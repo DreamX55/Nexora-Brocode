@@ -22,7 +22,10 @@ class LocalSentenceTransformerEmbeddingModel(EmbeddingModel):
         if self._model is None:
             # Lazy loading to avoid overhead and early failures if not used
             from sentence_transformers import SentenceTransformer
-            self._model = SentenceTransformer(self.model_name)
+            try:
+                self._model = SentenceTransformer(self.model_name, local_files_only=True)
+            except Exception:
+                self._model = SentenceTransformer(self.model_name)
         return self._model
 
     def encode(self, texts: List[str]) -> np.ndarray:
