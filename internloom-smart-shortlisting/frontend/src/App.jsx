@@ -18,6 +18,7 @@ export default function App() {
   // Analysis results
   const [analysisData, setAnalysisData] = useState(null);
   const [selectedCandidate, setSelectedCandidate] = useState(null);
+  const [showBiasAudit, setShowBiasAudit] = useState(false);
   
   const jdInputRef = useRef(null);
   const resumeInputRef = useRef(null);
@@ -102,6 +103,7 @@ export default function App() {
     setResumeFiles([]);
     setAnalysisData(null);
     setSelectedCandidate(null);
+    setShowBiasAudit(false);
     setUploadError(null);
     setView('upload');
   };
@@ -261,12 +263,104 @@ export default function App() {
                   <span className="stat-item">
                     Requirements: <strong>{analysisData.job?.total_requirements}</strong> ({analysisData.job?.required_count} Required, {analysisData.job?.preferred_count} Preferred)
                   </span>
+                  {analysisData.job?.bias_audit && (
+                    <button 
+                      type="button"
+                      className={`stat-item bias-stat-pill ${analysisData.job.bias_audit.bias_free ? 'bias-clean' : 'bias-flagged'}`}
+                      onClick={() => setShowBiasAudit(!showBiasAudit)}
+                      aria-label="Toggle JD Inclusivity and Bias Audit"
+                    >
+                      <span className="bias-icon">{analysisData.job.bias_audit.bias_free ? '🛡️' : '⚠️'}</span>
+                      <span>Inclusivity Score: <strong>{analysisData.job.bias_audit.inclusivity_score}/100 ({analysisData.job.bias_audit.inclusivity_grade})</strong></span>
+                      <span className="bias-toggle-action">{showBiasAudit ? '▲ Hide Phrasing Audit' : '▼ View Phrasing Audit'}</span>
+                    </button>
+                  )}
                 </div>
               </div>
               <button className="btn-secondary" onClick={handleReset}>
                 ← Analyze New Batch
               </button>
             </div>
+
+            {/* JD INCLUSIVITY & PHRASING AUDIT CARD (Bonus Task 1) */}
+            {analysisData.job?.bias_audit && showBiasAudit && (
+              <div className="bias-audit-card" role="region" aria-label="Job Description Inclusivity Audit">
+                <div className="bias-audit-header">
+                  <div className="bias-audit-header-left">
+                    <span className="bonus-pill">Bonus Feature 1</span>
+                    <h3 className="bias-audit-title">Job Description Inclusivity & Phrasing Audit</h3>
+                  </div>
+                  <div className={`bias-score-badge-large grade-${analysisData.job.bias_audit.inclusivity_grade.toLowerCase().replace('+', '-plus')}`}>
+                    <div className="bias-score-text-wrap">
+                      <span className="bias-score-num">{analysisData.job.bias_audit.inclusivity_score}</span>
+                      <span className="bias-score-denom">/100</span>
+                    </div>
+                    <span className="bias-grade-chip">Grade {analysisData.job.bias_audit.inclusivity_grade}</span>
+                  </div>
+                </div>
+
+                <p className="bias-audit-summary">{analysisData.job.bias_audit.summary}</p>
+
+                {analysisData.job.bias_audit.flags.length === 0 ? (
+                  <div className="bias-clean-box">
+                    <span className="clean-check-icon">✓</span>
+                    <div>
+                      <h4 className="clean-box-title">Zero Exclusionary Phrasing Detected</h4>
+                      <p className="clean-box-desc">
+                        The Job Description demonstrates exemplary inclusive phrasing without pedigree locks, hyper-aggressive language, or unrealistic experience barriers.
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="bias-flags-list">
+                    <div className="bias-flags-list-title">Detected Phrasing Flags & Inclusive Recommendations ({analysisData.job.bias_audit.flags.length}):</div>
+                    <div className="bias-flags-grid">
+                      {analysisData.job.bias_audit.flags.map((flag) => (
+                        <div key={flag.id} className={`bias-flag-card severity-${flag.severity}`}>
+                          <div className="bias-flag-top">
+                            <span className={`bias-category-tag cat-${flag.category}`}>
+                              {flag.category === 'gender_coded' && '🚻 Gender-Coded / Hyper-Aggressive'}
+                              {flag.category === 'pedigree_degree' && '🎓 Pedigree / Degree Lock'}
+                              {flag.category === 'unrealistic_experience' && '⏳ Unrealistic Experience Ceiling'}
+                              {flag.category === 'age_generational' && '🎂 Age / Generational Coding'}
+                              {flag.category === 'ableist_physical' && '♿ Physical / Non-Essential Constraint'}
+                            </span>
+                            <span className={`bias-severity-pill sev-${flag.severity}`}>
+                              {flag.severity.toUpperCase()} IMPACT
+                            </span>
+                          </div>
+
+                          <div className="bias-flag-body">
+                            <div className="flag-row">
+                              <span className="flag-label">Flagged Phrasing:</span>
+                              <span className="flagged-term-highlight">"{flag.matched_text}"</span>
+                            </div>
+
+                            {flag.context_snippet && (
+                              <div className="flag-context-snippet">
+                                <span className="context-label">JD Context:</span>
+                                <em>"{flag.context_snippet}"</em>
+                              </div>
+                            )}
+
+                            <div className="flag-explanation">
+                              <strong>Why it excludes talent:</strong> {flag.explanation}
+                            </div>
+
+                            <div className="flag-recommendation">
+                              <span className="recommendation-icon">💡</span>
+                              <div>
+                                <strong>Inclusive Alternative:</strong> {flag.inclusive_alternative}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Processing Failures Alert (if any failed resumes) */}
             {analysisData.failed_candidates && analysisData.failed_candidates.length > 0 && (

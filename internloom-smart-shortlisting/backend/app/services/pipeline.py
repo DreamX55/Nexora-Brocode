@@ -11,7 +11,7 @@ from app.schemas.api import (
 from app.schemas.domain import JobDescription, RequirementPriority
 from app.schemas.candidate import CandidateProfile
 from app.services.document_parser import DocumentParser
-from app.services.jd_analyzer import JDAnalyzer
+from app.services.jd_analyzer import JDAnalyzer, JDBiasDetector
 from app.services.resume_analyzer import ResumeAnalyzer
 from app.services.keyword_matcher import KeywordMatcher
 from app.services.semantic_matcher import LocalSentenceTransformerEmbeddingModel, SemanticMatcher
@@ -37,6 +37,7 @@ class ShortlistingPipeline:
         logger.info("Initializing ShortlistingPipeline services...")
         self.parser = DocumentParser()
         self.jd_analyzer = JDAnalyzer()
+        self.bias_detector = JDBiasDetector()
         self.resume_analyzer = ResumeAnalyzer()
         self.keyword_matcher = KeywordMatcher()
         
@@ -102,7 +103,9 @@ class ShortlistingPipeline:
         elif candidates and not jd.requirements:
             logger.warning("Job Description contained 0 extractable requirements.")
 
-        # 4. Assemble Job Summary
+        # 4. Assemble Job Summary & Audit for Bias (Bonus Task 1)
+        bias_audit = self.bias_detector.audit_jd(jd, raw_text=jd_doc.raw_text)
+
         req_summaries = [
             JobRequirementSummary(
                 id=r.id,
@@ -123,7 +126,8 @@ class ShortlistingPipeline:
             total_requirements=len(jd.requirements),
             required_count=required_count,
             preferred_count=preferred_count,
-            requirements=req_summaries
+            requirements=req_summaries,
+            bias_audit=bias_audit
         )
 
         return AnalysisResponse(

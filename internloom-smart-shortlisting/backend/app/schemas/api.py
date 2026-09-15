@@ -1,6 +1,7 @@
 from typing import List, Optional, Dict, Any
 from pydantic import BaseModel, Field
 from app.schemas.explanation import CandidateExplanation
+from app.schemas.bias import JDBiasAudit
 
 class FailedCandidate(BaseModel):
     """
@@ -30,6 +31,7 @@ class JobSummary(BaseModel):
     required_count: int
     preferred_count: int
     requirements: List[JobRequirementSummary] = Field(default_factory=list)
+    bias_audit: Optional[JDBiasAudit] = None
 
 class AnalysisResponse(BaseModel):
     """
