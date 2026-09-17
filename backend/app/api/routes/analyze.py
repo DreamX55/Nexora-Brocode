@@ -41,17 +41,17 @@ async def analyze_candidates(
             detail=f"Unsupported file format for Job Description: '{jd_file.filename}'. Only PDF files are accepted."
         )
 
-    # 2. Validate Resumes batch size (strict competition requirement: 15-18 resumes)
+    # 2. Validate Resumes batch size (1-25 candidate resumes allowed)
     if not resume_files or len(resume_files) == 0:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="No candidate resumes provided. Batch size must be between 15 and 18 candidate resumes."
+            detail="No candidate resumes provided. Batch size must be between 1 and 25 candidate resumes."
         )
 
-    if len(resume_files) < 15 or len(resume_files) > 18:
+    if len(resume_files) < 1 or len(resume_files) > 25:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Batch size must be between 15 and 18 candidate resumes (received {len(resume_files)})."
+            detail=f"Batch size must be between 1 and 25 candidate resumes (received {len(resume_files)})."
         )
 
     for r_file in resume_files:

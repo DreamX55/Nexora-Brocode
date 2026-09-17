@@ -94,19 +94,22 @@ def test_1_health_check_functional():
     assert resp.json()["status"] == "ok"
 
 # ==============================================================================
-# 2. Production API Boundary Tests (14, 15, 18, 19, 0 resumes, invalid formats)
+# 2. Production API Boundary Tests (1, 15, 25, 26, 0 resumes, invalid formats)
 # ==============================================================================
-def test_boundary_reject_14_resumes(sample_jd_bytes, sample_resume_1, sample_resume_2, sample_resume_3):
-    """Boundary test: exactly 14 resumes must be rejected with HTTP 400."""
-    resumes = generate_n_resumes(14, sample_resume_1, sample_resume_2, sample_resume_3)
+def test_boundary_accept_1_resume(sample_jd_bytes, sample_resume_1, sample_resume_2, sample_resume_3):
+    """Boundary test: lower bound of exactly 1 resume must be accepted with HTTP 200."""
+    resumes = generate_n_resumes(1, sample_resume_1, sample_resume_2, sample_resume_3)
     files = [("jd_file", ("job_description.pdf", io.BytesIO(sample_jd_bytes), "application/pdf"))] + resumes
     resp = client.post("/api/analyze", files=files)
-    assert resp.status_code == 400
-    assert "between 15 and 18 candidate resumes" in resp.json()["detail"]
-    assert "received 14" in resp.json()["detail"]
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["total_resumes_received"] == 1
+    assert data["total_candidates_processed"] == 1
+    assert data["total_ranked"] == 1
+    assert len(data["ranked_candidates"]) == 1
 
 def test_boundary_accept_15_resumes(sample_jd_bytes, sample_resume_1, sample_resume_2, sample_resume_3):
-    """Boundary test: lower bound of exactly 15 resumes must be accepted with HTTP 200."""
+    """Boundary test: standard batch of 15 resumes must be accepted with HTTP 200."""
     resumes = generate_n_resumes(15, sample_resume_1, sample_resume_2, sample_resume_3)
     files = [("jd_file", ("job_description.pdf", io.BytesIO(sample_jd_bytes), "application/pdf"))] + resumes
     resp = client.post("/api/analyze", files=files)
@@ -117,26 +120,26 @@ def test_boundary_accept_15_resumes(sample_jd_bytes, sample_resume_1, sample_res
     assert data["total_ranked"] == 15
     assert len(data["ranked_candidates"]) == 15
 
-def test_boundary_accept_18_resumes(sample_jd_bytes, sample_resume_1, sample_resume_2, sample_resume_3):
-    """Boundary test: upper bound of exactly 18 resumes must be accepted with HTTP 200."""
-    resumes = generate_n_resumes(18, sample_resume_1, sample_resume_2, sample_resume_3)
+def test_boundary_accept_25_resumes(sample_jd_bytes, sample_resume_1, sample_resume_2, sample_resume_3):
+    """Boundary test: upper bound of exactly 25 resumes must be accepted with HTTP 200."""
+    resumes = generate_n_resumes(25, sample_resume_1, sample_resume_2, sample_resume_3)
     files = [("jd_file", ("job_description.pdf", io.BytesIO(sample_jd_bytes), "application/pdf"))] + resumes
     resp = client.post("/api/analyze", files=files)
     assert resp.status_code == 200
     data = resp.json()
-    assert data["total_resumes_received"] == 18
-    assert data["total_candidates_processed"] == 18
-    assert data["total_ranked"] == 18
-    assert len(data["ranked_candidates"]) == 18
+    assert data["total_resumes_received"] == 25
+    assert data["total_candidates_processed"] == 25
+    assert data["total_ranked"] == 25
+    assert len(data["ranked_candidates"]) == 25
 
-def test_boundary_reject_19_resumes(sample_jd_bytes, sample_resume_1, sample_resume_2, sample_resume_3):
-    """Boundary test: exactly 19 resumes must be rejected with HTTP 400."""
-    resumes = generate_n_resumes(19, sample_resume_1, sample_resume_2, sample_resume_3)
+def test_boundary_reject_26_resumes(sample_jd_bytes, sample_resume_1, sample_resume_2, sample_resume_3):
+    """Boundary test: exactly 26 resumes must be rejected with HTTP 400."""
+    resumes = generate_n_resumes(26, sample_resume_1, sample_resume_2, sample_resume_3)
     files = [("jd_file", ("job_description.pdf", io.BytesIO(sample_jd_bytes), "application/pdf"))] + resumes
     resp = client.post("/api/analyze", files=files)
     assert resp.status_code == 400
-    assert "between 15 and 18 candidate resumes" in resp.json()["detail"]
-    assert "received 19" in resp.json()["detail"]
+    assert "between 1 and 25 candidate resumes" in resp.json()["detail"]
+    assert "received 26" in resp.json()["detail"]
 
 def test_boundary_reject_0_resumes(sample_jd_bytes):
     """Boundary test: 0 resumes provided must be rejected with HTTP 400 or 422."""

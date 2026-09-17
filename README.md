@@ -1,5 +1,5 @@
-# 🌟 Nexora — InternLoom Smart Shortlisting Engine
-### *AI-Powered Multimodal Resume-to-Job Matching, Bias Auditing & Explainable Shortlisting Suite*
+# 🌟 Vettora — AI Vetting & Vectorized Shortlisting Platform
+### *AI-Powered Multimodal Resume-to-Job Matching, Inclusivity Auditing & Explainable Shortlisting Suite*
 
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/Backend-FastAPI-009688.svg)](https://fastapi.tiangolo.com/)
@@ -12,7 +12,7 @@
 
 ## 🎬 Live Demo & Video Walkthrough
 
-![Nexora UI Walkthrough Preview](./assets/demo_preview.gif)
+![Vettora UI Walkthrough Preview](./assets/demo_preview.gif)
 
 > 📹 **Watch Full Walkthrough Video**: [`assets/demo_walkthrough.mp4`](./assets/demo_walkthrough.mp4)  
 > 📄 **Executive PDF Summary**: [`hackathon_information/Project_Summary_1Page.pdf`](./hackathon_information/Project_Summary_1Page.pdf)  
@@ -22,7 +22,7 @@
 
 ## 📌 Executive Summary
 
-**Nexora (Team Brocode)** delivers **InternLoom Smart Shortlisting Engine**, an enterprise-grade recruiting intelligence platform designed to replace opaque keyword-based applicant tracking systems (ATS). By combining **semantic vector embeddings**, **hybrid multi-factor scoring**, **automated explainability**, **ranking robustness auditing**, and **proactive job description inclusivity/bias detection**, Nexora provides recruiters with transparent, calibrated, and equitable shortlisting recommendations in seconds.
+**Vettora** (developed by Team Brocode for the Nexora Hackathon) is an enterprise-grade AI candidate vetting and vectorized shortlisting platform designed to replace opaque keyword-based applicant tracking systems (ATS). By combining **semantic vector embeddings**, **hybrid multi-factor scoring (1–25 candidates)**, **automated explainability**, **ranking robustness auditing**, and **proactive job description inclusivity/bias detection**, Vettora provides recruiters with transparent, calibrated, and equitable shortlisting recommendations in seconds.
 
 ---
 
@@ -223,7 +223,6 @@ pytest
 ---
 
 ## 👥 Team Brocode — Nexora Hackathon
-
 - **Team**: Brocode
-- **Project**: Nexora / InternLoom Smart Shortlisting Engine
+- **Project**: Vettora — AI Vetting & Vectorized Shortlisting Platform
 - **Repository**: [https://github.com/DreamX55/Nexora-Brocode](https://github.com/DreamX55/Nexora-Brocode)

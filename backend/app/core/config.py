@@ -2,7 +2,7 @@ from typing import List
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
-    APP_NAME: str = "InternLoom Smart Shortlisting Engine"
+    APP_NAME: str = "Vettora AI Vetting Platform"
     API_V1_STR: str = "/api/v1"
     BACKEND_CORS_ORIGINS: List[str] = [
         "http://localhost:5173",

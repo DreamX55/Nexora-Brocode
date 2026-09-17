@@ -44,16 +44,16 @@ export default function App() {
       return;
     }
     setResumeFiles(files);
-    if (files.length < 15) {
-      setUploadError(`Batch size requirement: 15–18 candidate resumes required (currently ${files.length} selected). Please select at least ${15 - files.length} more resume(s).`);
-    } else if (files.length > 18) {
-      setUploadError(`Batch size requirement: Maximum 18 candidate resumes allowed (currently ${files.length} selected). Please remove ${files.length - 18} resume(s).`);
+    if (files.length < 1) {
+      setUploadError('Batch size requirement: At least 1 candidate resume required.');
+    } else if (files.length > 25) {
+      setUploadError(`Batch size requirement: Maximum 25 candidate resumes allowed (currently ${files.length} selected). Please remove ${files.length - 25} resume(s).`);
     } else {
       setUploadError(null);
     }
   };
 
-  const isBatchValid = resumeFiles.length >= 15 && resumeFiles.length <= 18;
+  const isBatchValid = resumeFiles.length >= 1 && resumeFiles.length <= 25;
 
   // Submit batch analysis to backend
   const handleStartAnalysis = async () => {
@@ -62,7 +62,7 @@ export default function App() {
       return;
     }
     if (!isBatchValid) {
-      setUploadError(`Competition requirement: Exactly 15–18 candidate resumes are required for shortlisting (currently ${resumeFiles.length} selected).`);
+      setUploadError(`Requirement: Between 1 and 25 candidate resumes are required for shortlisting (currently ${resumeFiles.length} selected).`);
       return;
     }
 
@@ -115,12 +115,8 @@ export default function App() {
         {/* Header / Brand Bar */}
         <header className="header-nav">
           <div>
-            <div className="brand-badge">InternLoom • Smart Shortlisting Engine</div>
+            <div className="brand-badge">Vettora • AI Vetting Platform</div>
             <h1 className="brand-title">Recruiter Intelligence.</h1>
-          </div>
-          <div className="offline-badge">
-            <span className="offline-dot" />
-            <span>100% Local & Offline</span>
           </div>
         </header>
 
@@ -133,7 +129,7 @@ export default function App() {
               <p className="hero-subtitle">Batch Candidate Evaluation</p>
               <h2 className="hero-title">Evidence-First Shortlisting.</h2>
               <p className="hero-desc">
-                Upload a Job Description and a batch of candidate resumes (15–18 PDFs).
+                Upload a Job Description and a batch of candidate resumes (1–25 PDFs).
                 Our local engine parses, matches, and ranks every candidate with auditable evidence provenance.
               </p>
             </div>
@@ -185,21 +181,21 @@ export default function App() {
               >
                 <div className="upload-icon">👥</div>
                 <h3 className="upload-label">Candidate Resumes</h3>
-                <p className="upload-hint">Click or drop 15–18 Candidate Resume PDFs</p>
+                <p className="upload-hint">Click or drop 1–25 Candidate Resume PDFs</p>
                 {resumeFiles.length > 0 ? (
                   isBatchValid ? (
                     <div className="file-status-pill" style={{ background: '#E8F5E9', color: '#2E7D32', border: '1px solid #C8E6C9' }}>
                       <span>✓</span>
-                      <span>{resumeFiles.length} resumes (Valid 15–18 batch)</span>
+                      <span>{resumeFiles.length} resume{resumeFiles.length === 1 ? '' : 's'} (Valid batch)</span>
                     </div>
                   ) : (
                     <div className="file-status-pill" style={{ background: '#FFEBEE', color: '#C62828', border: '1px solid #FFCDD2' }}>
                       <span>⚠️</span>
-                      <span>{resumeFiles.length} resumes (15–18 required)</span>
+                      <span>{resumeFiles.length} resumes (1–25 required)</span>
                     </div>
                   )
                 ) : (
-                  <span className="btn-secondary">Choose Resumes Batch (15–18 PDFs)</span>
+                  <span className="btn-secondary">Choose Resumes Batch (1–25 PDFs)</span>
                 )}
                 <input 
                   type="file" 
@@ -221,10 +217,10 @@ export default function App() {
                 {!jdFile 
                   ? "1. Select Job Description PDF"
                   : resumeFiles.length === 0 
-                  ? "2. Select 15–18 Candidate Resumes"
+                  ? "2. Select Candidate Resumes (1–25 PDFs)"
                   : !isBatchValid 
-                  ? `Select Valid Batch (${resumeFiles.length} selected — 15–18 required)`
-                  : `Analyze Candidates (${resumeFiles.length} Resumes) →`}
+                  ? `Select Valid Batch (${resumeFiles.length} selected — 1–25 required)`
+                  : `Analyze Candidates (${resumeFiles.length} Resume${resumeFiles.length === 1 ? '' : 's'}) →`}
               </button>
             </div>
           </section>
